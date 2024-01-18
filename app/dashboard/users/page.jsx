@@ -5,9 +5,11 @@ import styles from '@/app/ui/dashboard/users/users.module.css';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default async function UsersPage() {
-  const users = await fetchUsers();
-  console.log(users);
+export default async function UsersPage({searchParams}) {
+  const q = searchParams?.q || '';
+  const page = searchParams?.page || 1;
+  const {count, users} = await fetchUsers(q, page);
+
 
   return (
     <div className={styles.container}>
@@ -46,7 +48,7 @@ export default async function UsersPage() {
               <td>{user.isActive ? 'active' : 'passive'}</td>
               <td>
                 <div className={styles.buttons}>
-                  <Link href="/dashboard/users/tests">
+                <Link href={`/dashboard/users/${user.id}`}>
                     <button className={`${styles.button} ${styles.view}`}>
                       View
                     </button>
@@ -60,7 +62,7 @@ export default async function UsersPage() {
           ))}
         </tbody>
       </table>
-      <Pagination />
+      <Pagination count={count}/>
     </div>
   );
 }
